@@ -1,0 +1,85 @@
+openapi: 3.0.3
+info:
+  title: Dev Dashboard API
+  version: 1.0.0
+  description: Agrège des API externes (GitHub, Open-Meteo) avec cache et repli sur données périmées.
+paths:
+  /api/github/{username}:
+    get:
+      summary: Profil GitHub normalisé
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema: { type: string, pattern: '^[A-Za-z0-9-]{1,39}$' }
+      responses:
+        '200':
+          description: Profil trouvé
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GithubProfile' }
+        '404': { description: Nom d'utilisateur invalide }
+        '503': { description: Fournisseur indisponible et aucune donnée en cache }
+  /api/weather:
+    get:
+      summary: Météo actuelle
+      parameters:
+        - { name: lat, in: query, required: true, schema: { type: number, minimum: -90, maximum: 90 } }
+        - { name: lon, in: query, required: true, schema: { type: number, minimum: -180, maximum: 180 } }
+      responses:
+        '200':
+          description: Météo actuelle
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WeatherReport' }
+        '400': { description: Paramètres manquants ou invalides }
+        '503': { description: Fournisseur indisponible et aucune donnée en cache }
+  /api/dashboard:
+    get:
+      summary: Agrégation GitHub + météo
+      description: Répond 200 si au moins une source répond, 503 si toutes sont indisponibles.
+      parameters:
+        - { name: github, in: query, required: true, schema: { type: string } }
+        - { name: lat, in: query, required: true, schema: { type: number } }
+        - { name: lon, in: query, required: true, schema: { type: number } }
+      responses:
+        '200':
+          description: Au moins une source disponible
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Dashboard' }
+        '400': { description: Paramètres manquants ou invalides }
+        '503': { description: Toutes les sources sont indisponibles }
+components:
+  schemas:
+    GithubProfile:
+      type: object
+      properties:
+        login: { type: string }
+        name: { type: string, nullable: true }
+        publicRepos: { type: integer }
+        followers: { type: integer }
+        profileUrl: { type: string }
+        stale: { type: boolean }
+    WeatherReport:
+      type: object
+      properties:
+        latitude: { type: number }
+        longitude: { type: number }
+        temperatureCelsius: { type: number }
+        windSpeedKmh: { type: number }
+        weatherCode: { type: integer, description: Code WMO }
+        stale: { type: boolean }
+    Dashboard:
+      type: object
+      properties:
+        github:
+          type: object
+          properties:
+            status: { type: string, enum: [ok, stale, unavailable] }
+            data: { nullable: true, allOf: [ { $ref: '#/components/schemas/GithubProfile' } ] }
+        weather:
+          type: object
+          properties:
+            status: { type: string, enum: [ok, stale, unavailable] }
+            data: { nullable: true, allOf: [ { $ref: '#/components/schemas/WeatherReport' } ] }
