@@ -27,4 +27,18 @@ final readonly class GithubProfile
             true,
         );
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'login' => $this->login,
+            'name' => $this->name,
+            'publicRepos' => $this->publicRepos,
+            'followers' => $this->followers,
+            'profileUrl' => $this->profileUrl,
+        ];
+    }
 }

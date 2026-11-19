@@ -27,4 +27,18 @@ final readonly class WeatherReport
             true,
         );
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+            'temperatureCelsius' => $this->temperatureCelsius,
+            'windSpeedKmh' => $this->windSpeedKmh,
+            'weatherCode' => $this->weatherCode,
+        ];
+    }
 }
