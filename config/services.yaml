@@ -10,6 +10,7 @@ parameters:
 
 services:
     App\Provider\GithubProfileProviderInterface: '@App\Provider\CachedGithubProvider'
+    App\Provider\WeatherProviderInterface: '@App\Provider\CachedWeatherProvider'
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
@@ -27,3 +28,5 @@ when@test:
     services:
         App\Tests\Stub\StubGithubProvider: ~
         App\Provider\GithubProfileProviderInterface: '@App\Tests\Stub\StubGithubProvider'
+        App\Tests\Stub\StubWeatherProvider: ~
+        App\Provider\WeatherProviderInterface: '@App\Tests\Stub\StubWeatherProvider'

@@ -15,6 +15,12 @@ framework:
                 headers:
                     Accept: 'application/vnd.github+json'
                     User-Agent: 'dev-dashboard-api'
+            weather.client:
+                base_uri: 'https://api.open-meteo.com'
+                timeout: 5
+                headers:
+                    Accept: 'application/json'
+                    User-Agent: 'dev-dashboard-api'
 
 when@test:
     framework:
