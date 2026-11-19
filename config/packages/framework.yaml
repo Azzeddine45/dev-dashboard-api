@@ -7,6 +7,14 @@ framework:
 
     #esi: true
     #fragments: true
+    http_client:
+        scoped_clients:
+            github.client:
+                base_uri: 'https://api.github.com'
+                timeout: 5
+                headers:
+                    Accept: 'application/vnd.github+json'
+                    User-Agent: 'dev-dashboard-api'
 
 when@test:
     framework:
