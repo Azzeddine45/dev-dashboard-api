@@ -12,6 +12,19 @@ final readonly class GithubProfile
         public int $publicRepos,
         public int $followers,
         public string $profileUrl,
+        public bool $stale = false,
     ) {
+    }
+
+    public function asStale(): self
+    {
+        return new self(
+            $this->login,
+            $this->name,
+            $this->publicRepos,
+            $this->followers,
+            $this->profileUrl,
+            true,
+        );
     }
 }

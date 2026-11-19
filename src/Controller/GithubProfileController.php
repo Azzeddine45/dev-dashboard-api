@@ -41,6 +41,7 @@ final class GithubProfileController
             'publicRepos' => $profile->publicRepos,
             'followers' => $profile->followers,
             'profileUrl' => $profile->profileUrl,
+            'stale' => $profile->stale,
         ]);
     }
 }
