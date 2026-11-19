@@ -43,6 +43,7 @@ final class WeatherController
             'temperatureCelsius' => $report->temperatureCelsius,
             'windSpeedKmh' => $report->windSpeedKmh,
             'weatherCode' => $report->weatherCode,
+            'stal' => $report->stale,
         ]);
     }
 }

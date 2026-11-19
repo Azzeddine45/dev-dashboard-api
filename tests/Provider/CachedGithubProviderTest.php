@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Tests\Provider;
 
+use App\Cache\ResilientCache;
 use App\Dto\GithubProfile;
 use App\Exception\ProviderException;
 use App\Provider\CachedGithubProvider;
@@ -17,7 +18,7 @@ final class CachedGithubProviderTest extends TestCase
     public function testSecondCallIsServedFromCache(): void
     {
         $inner = new CountingProvider();
-        $provider = new CachedGithubProvider($inner, new ArrayAdapter(), new NullLogger());
+        $provider = new CachedGithubProvider($inner, new ResilientCache(new ArrayAdapter(), new NullLogger()));
 
         $provider->fetchProfile('octocat');
         $second = $provider->fetchProfile('octocat');
@@ -32,7 +33,10 @@ final class CachedGithubProviderTest extends TestCase
         $item = $cache->getItem('github_profile_octocat_stale');
         $cache->save($item->set(new GithubProfile('octocat', null, 1, 2, 'https://github.com/octocat')));
 
-        $provider = new CachedGithubProvider(new CountingProvider(fails: true), $cache, new NullLogger());
+        $provider = new CachedGithubProvider(
+            new CountingProvider(fails: true),
+            new ResilientCache($cache, new NullLogger()),
+        );
 
         $profile = $provider->fetchProfile('octocat');
 
@@ -42,7 +46,10 @@ final class CachedGithubProviderTest extends TestCase
 
     public function testThrowsWhenUpstreamFailsAndNothingIsCached(): void
     {
-        $provider = new CachedGithubProvider(new CountingProvider(fails: true), new ArrayAdapter(), new NullLogger());
+        $provider = new CachedGithubProvider(
+            new CountingProvider(fails: true),
+            new ResilientCache(new ArrayAdapter(), new NullLogger()),
+        );
 
         $this->expectException(ProviderException::class);
 

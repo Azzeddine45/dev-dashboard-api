@@ -12,6 +12,19 @@ final readonly class WeatherReport
         public float $temperatureCelsius,
         public float $windSpeedKmh,
         public int $weatherCode,
+        public bool $stale = false,
     ) {
+    }
+
+    public function asStale(): self
+    {
+        return new self(
+            $this->latitude,
+            $this->longitude,
+            $this->temperatureCelsius,
+            $this->windSpeedKmh,
+            $this->weatherCode,
+            true,
+        );
     }
 }
