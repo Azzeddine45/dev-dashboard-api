@@ -9,7 +9,7 @@ use App\Exception\ProviderException;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-final class GithubProvider
+final class GithubProvider implements GithubProfileProviderInterface
 {
     public function __construct(private readonly HttpClientInterface $githubClient)
     {
